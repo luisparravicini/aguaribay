@@ -224,7 +224,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   size: {x: 10, y: 10}
-  stepTime: 0
+  stepTime: 0.05
   startPosition: {x: 5, y: 5}
   nextCandidate: 0
   vertWallPrefab: {fileID: 8539618385897473804, guid: a6e42d9e326d14ca88943971369a6332,
