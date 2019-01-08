@@ -1,9 +1,12 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
 
 //
-// maze generator based on the description at http://pcg.wikidot.com/pcg-algorithm:maze and http://weblog.jamisbuck.org/2011/1/27/maze-generation-growing-tree-algorithm
+// maze generator based on the description at
+// http://pcg.wikidot.com/pcg-algorithm:maze 
+// http://weblog.jamisbuck.org/2011/1/27/maze-generation-growing-tree-algorithm
 //
 public class Maze : MonoBehaviour
 {
@@ -28,27 +31,60 @@ public class Maze : MonoBehaviour
     public Material candidateMaterial;
     public Material corridorMaterial;
     bool[,] visited;
+    public Button btnStart;
+    public Button btnWalk;
+    Coroutine generator;
+
 
     private void Start()
     {
+        Reset();
+    }
+
+    public void OnBtnStart()
+    {
+        btnStart.interactable = false;
         Generate();
     }
+
+    public void OnBtnReset()
+    {
+        btnStart.interactable = true;
+        Reset();
+    }
+
+    public void OnBtnWalk() { }
 
     private void OnDrawGizmos()
     {
         Gizmos.DrawWireCube(transform.position, new Vector3(size.x, 1, size.y));
     }
 
-    public void Generate()
+    private void Reset()
     {
+        btnWalk.interactable = false;
+
+        if (generator != null)
+        {
+            StopCoroutine(generator);
+            generator = null;
+        }
+
+        foreach (Transform child in transform)
+            Destroy(child.gameObject);
+
         blocks = new MeshRenderer[size.x, size.y];
         visited = new bool[size.x, size.y];
         wallsVert = new GameObject[size.x + 1, size.y + 1];
         wallsHoriz = new GameObject[size.x + 1, size.y + 1];
         CreateUI();
+    }
 
+    public void Generate()
+    {
+        Reset();
         stepWait = new WaitForSeconds(stepTime);
-        StartCoroutine(GenerateSteps());
+        generator = StartCoroutine(GenerateSteps());
     }
 
     void CreateUI()
@@ -134,6 +170,9 @@ public class Maze : MonoBehaviour
 
             yield return stepWait;
         }
+
+        generator = null;
+        btnWalk.interactable = true;
     }
 
     private void RemoveWall(Vector2Int src, Vector2Int dst)
@@ -145,7 +184,7 @@ public class Maze : MonoBehaviour
         if (delta.x < 0)
             wallsVert[src.x, src.y].SetActive(false);
         if (delta.y > 0)
-            wallsHoriz[src.x, src.y+1].SetActive(false);
+            wallsHoriz[src.x, src.y + 1].SetActive(false);
         if (delta.y < 0)
             wallsHoriz[src.x, src.y].SetActive(false);
     }
