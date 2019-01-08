@@ -18,12 +18,16 @@ public class Maze : MonoBehaviour
     public Material candidateMaterial;
     public Material corridorMaterial;
     public Button btnStart;
+    public Button btnReset;
     public Button btnWalk;
+    public GameObject walker;
+    public GameObject mainCam;
     Coroutine generator;
     YieldInstruction stepWait;
     MeshRenderer[,] blocks;
     GameObject[,] wallsVert;
     GameObject[,] wallsHoriz;
+    bool walking;
 
 
     private void Start()
@@ -43,7 +47,15 @@ public class Maze : MonoBehaviour
         Reset();
     }
 
-    public void OnBtnWalk() { }
+    public void OnBtnWalk()
+    {
+        walking = !walking;
+        btnStart.interactable = btnReset.interactable = !walking;
+        btnWalk.GetComponentInChildren<Text>().text = (walking ? "Exit" : "Walk");
+
+        walker.SetActive(walking);
+        mainCam.SetActive(!walking);
+    }
 
     private void OnDrawGizmos()
     {
@@ -115,7 +127,7 @@ public class Maze : MonoBehaviour
         var growingTree = new GrowingTree(size, firstPos, nextCandidate);
         growingTree.OnVisit += (pos) => blocks[pos.x, pos.y].sharedMaterial = candidateMaterial;
         growingTree.OnDeadEnd += (pos) => blocks[pos.x, pos.y].sharedMaterial = corridorMaterial;
-        growingTree.OnCarvePassage += (src, dst) => RemoveWall(src, dst);
+        growingTree.OnCarvePassage += RemoveWall;
 
         growingTree.Start();
         while (!growingTree.finished)
