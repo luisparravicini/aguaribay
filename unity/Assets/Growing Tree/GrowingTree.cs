@@ -90,7 +90,7 @@ public class GrowingTree
         var candidate = candidates[candidateIndex];
         visited[candidate.x, candidate.y] = true;
 
-        OnVisit(candidate);
+        OnVisit?.Invoke(candidate);
 
         foreach (var delta in deltas)
         {
@@ -111,14 +111,14 @@ public class GrowingTree
         if (neighbours.Count == 0)
         {
             candidates.RemoveAt(candidateIndex);
-            OnDeadEnd(candidate);
+            OnDeadEnd?.Invoke(candidate);
         }
         else
         {
             var neighbour = neighbours[Random.Range(0, neighbours.Count)];
             candidates.Add(neighbour);
             Maze.Carve(candidate, neighbour);
-            OnCarvePassage(candidate, neighbour);
+            OnCarvePassage?.Invoke(candidate, neighbour);
         }
 
         neighbours.Clear();
