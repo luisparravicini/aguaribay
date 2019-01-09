@@ -1,10 +1,10 @@
-﻿using System.Collections;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using UnityEngine;
 
 public delegate void OnVisitHandler(Vector2Int pos);
 public delegate void OnDeadEndHandler(Vector2Int pos);
 public delegate void OnCarvePassageHandler(Vector2Int src, Vector2Int dst);
+
 
 /*
  *
@@ -22,7 +22,7 @@ public class GrowingTree
     };
 
     Vector2Int startPosition;
-    NextCandidateStrategy nextCandidate;
+    readonly NextCandidateStrategy nextCandidate;
     bool[,] visited;
     Vector2Int size;
     public event OnVisitHandler OnVisit;
@@ -31,6 +31,8 @@ public class GrowingTree
     Vector2Int[] deltas;
     List<Vector2Int> neighbours;
     List<Vector2Int> candidates;
+    public MazeSpec maze { get; private set; }
+    MazeSpec mazeSpec;
 
     public GrowingTree(Vector2Int size, Vector2Int startPosition, NextCandidateStrategy nextCandidate)
     {
@@ -41,7 +43,7 @@ public class GrowingTree
 
     public bool finished { get; internal set; }
 
-    int GetNextIndex(List<Vector2Int> candidates)
+    int GetNextIndex()
     {
         int index = int.MaxValue;
         switch (nextCandidate)
@@ -75,6 +77,7 @@ public class GrowingTree
         {
             startPosition
         };
+        mazeSpec = new MazeSpec(size);
     }
 
     public void Step()
@@ -85,7 +88,7 @@ public class GrowingTree
             return;
         }
 
-        var candidateIndex = GetNextIndex(candidates);
+        var candidateIndex = GetNextIndex();
         var candidate = candidates[candidateIndex];
         visited[candidate.x, candidate.y] = true;
 
@@ -116,10 +119,10 @@ public class GrowingTree
         {
             var neighbour = neighbours[Random.Range(0, neighbours.Count)];
             candidates.Add(neighbour);
+            mazeSpec.Carve(candidate, neighbour);
             OnCarvePassage(candidate, neighbour);
         }
 
         neighbours.Clear();
-
     }
 }

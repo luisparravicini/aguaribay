@@ -137,7 +137,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 91153117}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0.5, y: 0, z: 0.5}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 1239098890}
@@ -156,7 +156,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e158a1def36c946ab96e08398ba90ba4, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  rotationSpeed: 5
+  rotationSpeed: 12
   walkSpeed: 7
 --- !u!1 &224347745
 GameObject:
@@ -1139,7 +1139,7 @@ MonoBehaviour:
   btnStart: {fileID: 440272436}
   btnReset: {fileID: 977127581}
   btnWalk: {fileID: 224347747}
-  walker: {fileID: 91153117}
+  walker: {fileID: 91153119}
   mainCam: {fileID: 534669902}
 --- !u!4 &1407929307
 Transform:

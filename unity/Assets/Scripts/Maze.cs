@@ -20,7 +20,7 @@ public class Maze : MonoBehaviour
     public Button btnStart;
     public Button btnReset;
     public Button btnWalk;
-    public GameObject walker;
+    public Movement walker;
     public GameObject mainCam;
     Coroutine generator;
     YieldInstruction stepWait;
@@ -28,6 +28,7 @@ public class Maze : MonoBehaviour
     GameObject[,] wallsVert;
     GameObject[,] wallsHoriz;
     bool walking;
+    MazeSpec maze;
 
 
     private void Start()
@@ -49,11 +50,14 @@ public class Maze : MonoBehaviour
 
     public void OnBtnWalk()
     {
+        var delta = transform.TransformPoint(0.5f, 0, 0.5f);
+        walker.Setup(delta, Vector2Int.zero, maze, Direction.N);
+
         walking = !walking;
         btnStart.interactable = btnReset.interactable = !walking;
         btnWalk.GetComponentInChildren<Text>().text = (walking ? "Exit" : "Walk");
 
-        walker.SetActive(walking);
+        walker.gameObject.SetActive(walking);
         mainCam.SetActive(!walking);
     }
 
@@ -99,21 +103,21 @@ public class Maze : MonoBehaviour
                 if (y < size.y && x < size.x)
                 {
                     var block = Instantiate(floorPrefab, pos, floorPrefab.transform.rotation);
-                    block.transform.SetParent(transform);
+                    block.transform.SetParent(transform, false);
                     blocks[x, y] = block.GetComponent<MeshRenderer>();
                 }
 
                 if (y < size.y)
                 {
                     var wall = Instantiate(vertWallPrefab, pos, vertWallPrefab.transform.rotation);
-                    wall.transform.SetParent(transform);
+                    wall.transform.SetParent(transform, false);
                     wallsVert[x, y] = wall;
                 }
 
                 if (x < size.x)
                 {
                     var wall = Instantiate(horizWallPrefab, pos, horizWallPrefab.transform.rotation);
-                    wall.transform.SetParent(transform);
+                    wall.transform.SetParent(transform, false);
                     wallsHoriz[x, y] = wall;
                 }
             }
@@ -136,6 +140,7 @@ public class Maze : MonoBehaviour
             yield return stepWait;
         }
 
+        maze = growingTree.maze;
         generator = null;
         btnWalk.interactable = true;
         btnStart.interactable = true;
@@ -145,13 +150,9 @@ public class Maze : MonoBehaviour
     {
         var delta = dst - src;
 
-        if (delta.x > 0)
-            wallsVert[src.x + 1, src.y].SetActive(false);
-        if (delta.x < 0)
-            wallsVert[src.x, src.y].SetActive(false);
-        if (delta.y > 0)
-            wallsHoriz[src.x, src.y + 1].SetActive(false);
-        if (delta.y < 0)
-            wallsHoriz[src.x, src.y].SetActive(false);
+        if (delta.x != 0)
+            wallsVert[src.x + (delta.x > 0 ? 1 : 0), src.y].SetActive(false);
+        if (delta.y != 0)
+            wallsHoriz[src.x, src.y + (delta.y > 0 ? 1 : 0)].SetActive(false);
     }
 }
