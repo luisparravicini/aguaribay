@@ -31,7 +31,8 @@ public class GrowingTree
     Vector2Int[] deltas;
     List<Vector2Int> neighbours;
     List<Vector2Int> candidates;
-    public MazeSpec maze { get; private set; }
+    public MazeSpec Maze { get; private set; }
+    public bool Finished { get; internal set; }
 
     public GrowingTree(Vector2Int size, Vector2Int startPosition, NextCandidateStrategy nextCandidate)
     {
@@ -39,8 +40,6 @@ public class GrowingTree
         this.startPosition = startPosition;
         this.nextCandidate = nextCandidate;
     }
-
-    public bool finished { get; internal set; }
 
     int GetNextIndex()
     {
@@ -76,14 +75,14 @@ public class GrowingTree
         {
             startPosition
         };
-        maze = new MazeSpec(size);
+        Maze = new MazeSpec(size);
     }
 
     public void Step()
     {
         if (candidates.Count == 0)
         {
-            finished = true;
+            Finished = true;
             return;
         }
 
@@ -118,7 +117,7 @@ public class GrowingTree
         {
             var neighbour = neighbours[Random.Range(0, neighbours.Count)];
             candidates.Add(neighbour);
-            maze.Carve(candidate, neighbour);
+            Maze.Carve(candidate, neighbour);
             OnCarvePassage(candidate, neighbour);
         }
 

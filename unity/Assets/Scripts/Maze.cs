@@ -144,13 +144,13 @@ public class Maze : MonoBehaviour
         growingTree.OnCarvePassage += RemoveWall;
 
         growingTree.Start();
-        while (!growingTree.finished)
+        while (!growingTree.Finished)
         {
             growingTree.Step();
             yield return stepWait;
         }
 
-        maze = growingTree.maze;
+        maze = growingTree.Maze;
         generator = null;
         btnWalk.interactable = true;
         btnStart.interactable = true;
