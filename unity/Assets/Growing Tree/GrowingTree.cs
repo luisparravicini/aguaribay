@@ -17,8 +17,8 @@ public class GrowingTree
     public enum NextCandidateStrategy
     {
         Newest,
-        Oldest,
         Random,
+        NewestRandom,
     };
 
     Vector2Int startPosition;
@@ -46,8 +46,8 @@ public class GrowingTree
         int index = int.MaxValue;
         switch (nextCandidate)
         {
-            case NextCandidateStrategy.Oldest:
-                index = 0;
+            case NextCandidateStrategy.NewestRandom:
+                index = (Random.value > 0.5f ? candidates.Count - 1 : Random.Range(0, candidates.Count));
                 break;
             case NextCandidateStrategy.Newest:
                 index = candidates.Count - 1;
