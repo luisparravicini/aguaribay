@@ -1,4 +1,6 @@
-﻿using UnityEngine;
+﻿using System;
+using System.Collections.Generic;
+using UnityEngine;
 
 
 public class MazeSpec
@@ -12,6 +14,12 @@ public class MazeSpec
 
     public void Carve(Vector2Int src, Vector2Int dst)
     {
+        CarveTo(src, dst);
+        CarveTo(dst, src);
+    }
+
+    void CarveTo(Vector2Int src, Vector2Int dst)
+    {
         var delta = dst - src;
         if (delta != Vector2Int.zero)
         {
@@ -22,7 +30,7 @@ public class MazeSpec
                 d = Direction.W;
             if (delta.y == 1)
                 d = Direction.N;
-            if (delta.y == 0)
+            if (delta.y == -1)
                 d = Direction.S;
             data[src.x, src.y] |= d.ToBits();
         }
@@ -52,4 +60,16 @@ public class MazeSpec
         return pos;
     }
 
+    public Direction[] ValidMoves(Vector2Int pos)
+    {
+        var moves = new List<Direction>();
+        var value = data[pos.x, pos.y];
+        foreach (Direction d in Enum.GetValues(typeof(Direction)))
+        {
+            if (Move(pos, d) != null)
+                moves.Add(d);
+        }
+
+        return moves.ToArray();
+    }
 }

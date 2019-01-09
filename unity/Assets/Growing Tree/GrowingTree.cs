@@ -32,7 +32,6 @@ public class GrowingTree
     List<Vector2Int> neighbours;
     List<Vector2Int> candidates;
     public MazeSpec maze { get; private set; }
-    MazeSpec mazeSpec;
 
     public GrowingTree(Vector2Int size, Vector2Int startPosition, NextCandidateStrategy nextCandidate)
     {
@@ -77,7 +76,7 @@ public class GrowingTree
         {
             startPosition
         };
-        mazeSpec = new MazeSpec(size);
+        maze = new MazeSpec(size);
     }
 
     public void Step()
@@ -119,7 +118,7 @@ public class GrowingTree
         {
             var neighbour = neighbours[Random.Range(0, neighbours.Count)];
             candidates.Add(neighbour);
-            mazeSpec.Carve(candidate, neighbour);
+            maze.Carve(candidate, neighbour);
             OnCarvePassage(candidate, neighbour);
         }
 
